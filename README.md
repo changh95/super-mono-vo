@@ -1,3 +1,10 @@
+Currently under construction!
+
+Very bad coding style, but it works.
+
+
+---
+
 This is an OpenCV 3.0 based implementation of a monocular visual odometry algorithm.
 
 ## Algorithm
