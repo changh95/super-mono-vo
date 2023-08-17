@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 
     cv::Mat traj = cv::Mat::zeros(600, 600, CV_8UC3);
 
-    for (int numFrame = 1; numFrame < MAX_FRAME; numFrame++) {
+    for (int numFrame = 1; numFrame < MAX_FRAME-1; numFrame++) {
         sprintf(filename1, "/data/00/image_0/%06d.png", numFrame);
         sprintf(filename2, "/data/00/image_0/%06d.png", numFrame + 1);
 

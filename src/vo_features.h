@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/features2d/features2d.hpp"
+#include "opencv2/features2d.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 
 
@@ -60,16 +61,37 @@ void super_detect_and_match(std::shared_ptr<SuperPoint>& superpoint,
 
     std::vector<cv::DMatch> superglue_matches;
 
-    std::cout << "SuperPoint done" << std::endl;
-
     superglue->matching_points(feature_points1, feature_points2, superglue_matches);
 
-    std::cout << "SuperGlue done" << std::endl;
+//    for (size_t i = 0; i < feature_points1.cols(); ++i) {
+//        double x = feature_points1(1, i);
+//        double y = feature_points1(2, i);
+//        points1.emplace_back(x,y);
+//    }
 
     for (const auto& match : superglue_matches) {
         points1.push_back(cv::Point2f(feature_points1(1, match.queryIdx), feature_points1(2, match.queryIdx)));
         points2.push_back(cv::Point2f(feature_points2(1, match.trainIdx), feature_points2(2, match.trainIdx)));
     }
+
+    std::vector<cv::KeyPoint> keypoints1, keypoints2;
+    for (size_t i = 0; i < feature_points1.cols(); ++i) {
+        double score = feature_points1(0, i);
+        double x = feature_points1(1, i);
+        double y = feature_points1(2, i);
+        keypoints1.emplace_back(x, y, 8, -1, score);
+    }
+    for (size_t i = 0; i < feature_points2.cols(); ++i) {
+        double score = feature_points2(0, i);
+        double x = feature_points2(1, i);
+        double y = feature_points2(2, i);
+        keypoints2.emplace_back(x, y, 8, -1, score);
+    }
+
+    cv::Mat output_image;
+    cv::drawMatches(img1, keypoints1, img2, keypoints2, superglue_matches, output_image, cv::Scalar(0, 255, 0), cv::Scalar(0, 0, 255));
+    cv::imshow("Matches", output_image);
+    cv::waitKey(1);
 }
 
 void super_featureTracking(std::shared_ptr<SuperGlue> &superglue,
