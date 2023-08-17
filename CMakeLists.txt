@@ -20,9 +20,20 @@ include_directories(
         ${YAML_CPP_INCLUDE_DIR}
         )
 
-file(GLOB viso
+file(GLOB mono_vo_src
     "src/*.h"
-    "src/*.cpp"
+    "src/visodo.cpp"
 )
-add_executable( vo ${viso} )
-target_link_libraries( vo ${OpenCV_LIBS} superpointglue_lib )
+add_executable( mono-vo
+        ${mono_vo_src}
+)
+target_link_libraries( mono-vo ${OpenCV_LIBS} superpointglue_lib )
+
+file(GLOB super_vo_src
+        "src/*.h"
+        "src/super_visodo.cpp"
+)
+add_executable( super-vo
+        ${super_vo_src}
+)
+target_link_libraries( super-vo ${OpenCV_LIBS} superpointglue_lib )

@@ -45,15 +45,56 @@ THE SOFTWARE.
 #include <fstream>
 #include <string>
 
-void super_featureTracking(std::shared_ptr<SuperGlue> &superglue,
-                           Eigen::Matrix<double, 259, Eigen::Dynamic> &feature_points0,
-                           Eigen::Matrix<double, 259, Eigen::Dynamic> &feature_points1, std::vector<cv::Point2f> &points1,
-                           std::vector<cv::Point2f> &points2, std::vector<uchar> &status) {
+void super_detect_and_match(std::shared_ptr<SuperPoint>& superpoint,
+                            std::shared_ptr<SuperGlue>& superglue,
+                            cv::Mat img1,
+                            cv::Mat img2,
+                            std::vector<cv::Point2f>& points1,
+                            std::vector<cv::Point2f>& points2)
+{
+    Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points1;
+    Eigen::Matrix<double, 259, Eigen::Dynamic> feature_points2;
+
+    superpoint->infer(img1, feature_points1);
+    superpoint->infer(img2, feature_points2);
+
     std::vector<cv::DMatch> superglue_matches;
-    superglue->matching_points(feature_points0, feature_points1, superglue_matches);
+
+    std::cout << "SuperPoint done" << std::endl;
+
+    superglue->matching_points(feature_points1, feature_points2, superglue_matches);
+
+    std::cout << "SuperGlue done" << std::endl;
+
+    for (const auto& match : superglue_matches) {
+        points1.push_back(cv::Point2f(feature_points1(1, match.queryIdx), feature_points1(2, match.queryIdx)));
+        points2.push_back(cv::Point2f(feature_points2(1, match.trainIdx), feature_points2(2, match.trainIdx)));
+    }
 }
 
-void featureTracking(cv::Mat img_1, cv::Mat img_2, std::vector<cv::Point2f> &points1, std::vector<cv::Point2f> &points2, std::vector<uchar> &status) {
+void super_featureTracking(std::shared_ptr<SuperGlue> &superglue,
+                           Eigen::Matrix<double, 259, Eigen::Dynamic> &feature_points0,
+                           Eigen::Matrix<double, 259, Eigen::Dynamic> &feature_points1,
+                           std::vector<cv::Point2f> &points1,
+                           std::vector<cv::Point2f> &points2,
+                           std::vector<uchar> &status) {
+    std::vector<cv::DMatch> superglue_matches;
+    std::vector<cv::KeyPoint> keypoints0, keypoints1;
+    superglue->matching_points(feature_points0, feature_points1, superglue_matches);
+
+    // Filter out bad matches that have score lower than 1.0.
+    for (auto & match : superglue_matches) {
+        if (match.distance < 1.0) {
+            points1.push_back(keypoints0[match.queryIdx].pt);
+            points2.push_back(keypoints1[match.trainIdx].pt);
+        }
+    }
+
+
+}
+
+void featureTracking(cv::Mat img_1, cv::Mat img_2, std::vector<cv::Point2f> &points1, std::vector<cv::Point2f> &points2,
+                     std::vector<uchar> &status) {
 
 //this function automatically gets rid of points for which tracking fails
 
