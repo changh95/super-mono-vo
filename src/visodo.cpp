@@ -191,7 +191,7 @@ int main( int argc, char** argv )	{
     int y = int(t_f.at<double>(2)) + 100;
     circle(traj, Point(x, y) ,1, CV_RGB(255,0,0), 2);
 
-    rectangle( traj, Point(10, 30), Point(550, 50), CV_RGB(0,0,0), CV_FILLED);
+    rectangle( traj, Point(10, 30), Point(550, 50), CV_RGB(0,0,0), cv::FILLED);
     sprintf(text, "Coordinates: x = %02fm y = %02fm z = %02fm", t_f.at<double>(0), t_f.at<double>(1), t_f.at<double>(2));
     putText(traj, text, textOrg, fontFace, fontScale, Scalar::all(255), thickness, 8);
 
