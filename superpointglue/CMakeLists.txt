@@ -15,6 +15,7 @@ find_package(yaml-cpp REQUIRED)
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/3rdparty/tensorrtbuffer/include
   ${OpenCV_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
   ${CUDA_INCLUDE_DIRS}
