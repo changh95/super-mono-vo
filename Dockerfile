@@ -5,7 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Dependencies
 RUN apt-get update -y && \
-    apt-get install -y sudo git libeigen3-dev wget build-essential cmake  \
+    apt-get install -y sudo git libeigen3-dev wget build-essential gdb cmake  \
     libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libyaml-cpp-dev
 
 # OpenCV
